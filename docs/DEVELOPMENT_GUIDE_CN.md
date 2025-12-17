@@ -116,4 +116,17 @@ if (current >= 10) {
 
 详细的属性说明和配置列表，请参考: **[全局属性配置指南](GLOBAL_ATTRIBUTES_GUIDE_CN.md)**
 
+---
 
+## 6. 调试与指令 (Commands)
+
+模组内置了一些指令用于调试和查看状态。
+
+### `/magicinfo`
+*   **权限**: 所有玩家
+*   **功能**: 显示当前玩家的魔法状态详情，包括：
+    *   觉醒体质 (Archetype)
+    *   元素亲和 (Elements)
+    *   魔力值 (Current/Max)
+    *   硬直 (Stagger)
+    *   法术强度等属性
