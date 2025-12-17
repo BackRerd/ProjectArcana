@@ -1,0 +1,37 @@
+{
+    "weight": 1.0,
+    "min_elements": 1,
+    "max_elements": 1,
+    "force_all_elements": true,
+    "force_no_elements": false,
+    "modifiers": [
+        {
+            "attribute": "minecraft:generic.max_health",
+            "amount": 40.0,
+            "operation": "ADDITION",
+            "uuid": "c8c1d5e6-4f2a-4e1b-9a8d-7c6b5a4e3f21",
+            "name": "Awakening Health"
+        },
+        {
+            "attribute": "minecraft:generic.attack_damage",
+            "amount": 4.0,
+            "operation": "ADDITION",
+            "uuid": "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+            "name": "Awakening Damage"
+        },
+        {
+            "attribute": "projectarcana:max_mana",
+            "amount": 900.0,
+            "operation": "ADDITION",
+            "uuid": "f1e2d3c4-b5a6-9d8e-7f0c-1b2a3d4e5f60",
+            "name": "Awakening Mana"
+        },
+        {
+            "attribute": "minecraft:generic.knockback_resistance",
+            "amount": 0.8,
+            "operation": "ADDITION",
+            "uuid": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+            "name": "Awakening KB Res"
+        }
+    ]
+}
