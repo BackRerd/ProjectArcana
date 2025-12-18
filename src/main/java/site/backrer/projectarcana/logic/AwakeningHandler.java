@@ -82,7 +82,7 @@ public class AwakeningHandler {
 
         for (AwakeningArchetype.ModifierData modData : archetype.getModifiers()) {
             net.minecraft.world.entity.ai.attributes.Attribute attribute = ForgeRegistries.ATTRIBUTES
-                    .getValue(new ResourceLocation(modData.getAttribute()));
+                    .getValue(net.minecraft.resources.ResourceLocation.of(modData.getAttribute(), ':'));
             if (attribute != null) {
                 applyAttribute(player, attribute, modData.getUuid(), modData.getName(), modData.getAmount(),
                         modData.getOperation());
@@ -91,6 +91,47 @@ public class AwakeningHandler {
                 System.err.println("Attribute not found: " + modData.getAttribute());
             }
         }
+    }
+
+    /**
+     * Resets the player's magical attributes and re-triggers awakening.
+     */
+    public static void resetPlayer(Player player) {
+        // 1. Remove all possible awakening modifiers
+        for (AwakeningArchetype archetype : AwakeningDataLoader.getArchetypes().values()) {
+            if (archetype.getModifiers() != null) {
+                for (AwakeningArchetype.ModifierData modData : archetype.getModifiers()) {
+                    net.minecraft.world.entity.ai.attributes.Attribute attribute = ForgeRegistries.ATTRIBUTES
+                            .getValue(new ResourceLocation(modData.getAttribute()));
+                    if (attribute != null) {
+                        AttributeInstance instance = player.getAttribute(attribute);
+                        if (instance != null) {
+                            instance.removeModifier(modData.getUuid());
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Reset Base Attribute Values to global defaults
+        site.backrer.projectarcana.api.MagicConfig config = site.backrer.projectarcana.data.MagicConfigDataLoader
+                .getConfig();
+        if (config != null) {
+            config.applyToPlayer(player);
+        }
+
+        // 3. Reset Capability State
+        player.getCapability(site.backrer.projectarcana.capability.MagicStatsProvider.MAGIC_STATS).ifPresent(cap -> {
+            cap.setArchetype("");
+            cap.setElements(new ArrayList<>());
+            cap.setStagger(0);
+            // Mana will be set to max by the tick handler or we can set it here
+            cap.setMana((float) player
+                    .getAttributeValue(site.backrer.projectarcana.registry.MagicAttributes.MAX_MANA.get()));
+        });
+
+        // 4. Re-Awaken
+        awakenPlayer(player);
     }
 
     private static void applyAttribute(Player player, net.minecraft.world.entity.ai.attributes.Attribute attribute,

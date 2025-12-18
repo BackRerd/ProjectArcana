@@ -15,6 +15,26 @@ public interface IMagicStats {
 
     void addStagger(float stagger);
 
+    float getToughness();
+
+    void setToughness(float toughness);
+
+    float getStiffness();
+
+    void setStiffness(float stiffness);
+
+    float getShield();
+
+    void setShield(float shield);
+
+    void addShield(float shield);
+
+    int getSpellCooldown(String spellId);
+
+    void setSpellCooldown(String spellId, int ticks);
+
+    void tickCooldowns();
+
     void copyFrom(IMagicStats source);
 
     void saveNBTData(CompoundTag nbt);

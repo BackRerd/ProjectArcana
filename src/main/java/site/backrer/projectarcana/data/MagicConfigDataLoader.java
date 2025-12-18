@@ -26,7 +26,7 @@ public class MagicConfigDataLoader extends SimpleJsonResourceReloadListener {
                 try {
                     config = GSON.fromJson(json, MagicConfig.class);
                     if (config != null && config.getDefaultAttributes() != null) {
-                        applyAttributes(config);
+                        config.apply();
                     }
                     System.out.println("Loaded Global Magic Config.");
                 } catch (Exception e) {
@@ -34,43 +34,6 @@ public class MagicConfigDataLoader extends SimpleJsonResourceReloadListener {
                 }
             }
         });
-    }
-
-    private void applyAttributes(MagicConfig config) {
-        for (MagicConfig.AttributeConfig attrConfig : config.getDefaultAttributes()) {
-            net.minecraft.world.entity.ai.attributes.Attribute attribute = net.minecraftforge.registries.ForgeRegistries.ATTRIBUTES
-                    .getValue(new ResourceLocation(attrConfig.getAttribute()));
-            if (attribute instanceof net.minecraft.world.entity.ai.attributes.RangedAttribute rangedAttribute) {
-                // Use reflection to set min and max
-                try {
-                    java.lang.reflect.Field minField = net.minecraft.world.entity.ai.attributes.RangedAttribute.class
-                            .getDeclaredField("f_22308_"); // minValue
-                    minField.setAccessible(true);
-                    minField.setDouble(rangedAttribute, attrConfig.getMin());
-
-                    java.lang.reflect.Field maxField = net.minecraft.world.entity.ai.attributes.RangedAttribute.class
-                            .getDeclaredField("f_22309_"); // maxValue
-                    maxField.setAccessible(true);
-                    maxField.setDouble(rangedAttribute, attrConfig.getMax());
-                } catch (Exception e) {
-                    // Try MCP names if obfuscated names fail (dev env fallback)
-                    try {
-                        java.lang.reflect.Field minField = net.minecraft.world.entity.ai.attributes.RangedAttribute.class
-                                .getDeclaredField("minValue");
-                        minField.setAccessible(true);
-                        minField.setDouble(rangedAttribute, attrConfig.getMin());
-
-                        java.lang.reflect.Field maxField = net.minecraft.world.entity.ai.attributes.RangedAttribute.class
-                                .getDeclaredField("maxValue");
-                        maxField.setAccessible(true);
-                        maxField.setDouble(rangedAttribute, attrConfig.getMax());
-                    } catch (Exception ex) {
-                        System.err.println("Failed to set min/max for attribute " + attrConfig.getAttribute());
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        }
     }
 
     public static MagicConfig getConfig() {

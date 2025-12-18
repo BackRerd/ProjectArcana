@@ -14,89 +14,89 @@ import site.backrer.projectarcana.Projectarcana;
 @Mod.EventBusSubscriber(modid = Projectarcana.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class MagicAttributes {
 
-    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES,
-            Projectarcana.MODID);
+        public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES,
+                        Projectarcana.MODID);
 
-    // Base Default Values (Fallback)
-    // These values are overridden by
-    // data/projectarcana/magic_config/global_attributes.json
-    public static final double BASE_MAX_MANA = 100.0;
-    public static final double BASE_MANA_REGEN = 1.0;
-    public static final double BASE_SPELL_POWER = 0.0;
-    public static final double BASE_COOLDOWN_REDUCTION = 0.0;
-    public static final double BASE_MAX_STAGGER = 100.0;
+        private static final site.backrer.projectarcana.api.MagicConfig BOOTSTRAP_CONFIG = site.backrer.projectarcana.api.MagicConfig
+                        .loadDefaultConfig();
 
-    // Existing Attributes
-    public static final RegistryObject<Attribute> MAX_MANA = ATTRIBUTES.register("max_mana",
-            () -> new RangedAttribute("attribute.projectarcana.max_mana", BASE_MAX_MANA, 0.0D,
-                    1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> MANA_REGEN = ATTRIBUTES.register("mana_regen",
-            () -> new RangedAttribute("attribute.projectarcana.mana_regen", BASE_MANA_REGEN, 0.0D,
-                    1024.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> SPELL_POWER = ATTRIBUTES.register("spell_power",
-            () -> new RangedAttribute("attribute.projectarcana.spell_power", BASE_SPELL_POWER, 0.0D,
-                    1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> COOLDOWN_REDUCTION = ATTRIBUTES.register("cooldown_reduction",
-            () -> new RangedAttribute("attribute.projectarcana.cooldown_reduction",
-                    BASE_COOLDOWN_REDUCTION, 0.0D, 1.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> MAX_STAGGER = ATTRIBUTES.register("max_stagger",
-            () -> new RangedAttribute("attribute.projectarcana.max_stagger", BASE_MAX_STAGGER, 0.0D,
-                    10000.0D).setSyncable(true));
+        private static RegistryObject<Attribute> registerRanged(String name, double fallbackValue, double fallbackMin,
+                        double fallbackMax) {
+                double val = fallbackValue;
+                double min = fallbackMin;
+                double max = fallbackMax;
 
-    // Elemental Damage Attributes
-    public static final RegistryObject<Attribute> ELEMENT_METAL_DAMAGE = ATTRIBUTES.register("element_metal_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_metal_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_WOOD_DAMAGE = ATTRIBUTES.register("element_wood_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_wood_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_WATER_DAMAGE = ATTRIBUTES.register("element_water_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_water_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_FIRE_DAMAGE = ATTRIBUTES.register("element_fire_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_fire_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_LIGHT_DAMAGE = ATTRIBUTES.register("element_light_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_light_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_DARK_DAMAGE = ATTRIBUTES.register("element_dark_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_dark_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_WIND_DAMAGE = ATTRIBUTES.register("element_wind_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_wind_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> ELEMENT_ICE_DAMAGE = ATTRIBUTES.register("element_ice_damage",
-            () -> new RangedAttribute("attribute.projectarcana.element_ice_damage",
-                    0.0D, 0.0D, 1000000.0D).setSyncable(true));
+                if (BOOTSTRAP_CONFIG != null) {
+                        site.backrer.projectarcana.api.MagicConfig.AttributeConfig cfg = BOOTSTRAP_CONFIG
+                                        .getAttributeConfig(name);
+                        if (cfg != null) {
+                                val = cfg.getValue();
+                                min = cfg.getMin();
+                                max = cfg.getMax();
+                        }
+                }
 
-    // Defense Attributes
-    public static final RegistryObject<Attribute> MAGIC_RESILIENCE = ATTRIBUTES.register("magic_resilience",
-            () -> new RangedAttribute("attribute.projectarcana.magic_resilience", 0.0D,
-                    0.0D, 1000000.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> MAGIC_RESISTANCE = ATTRIBUTES.register("magic_resistance",
-            () -> new RangedAttribute("attribute.projectarcana.magic_resistance", 0.0D,
-                    0.0D, 1000000.0D).setSyncable(true));
+                final double finalVal = val;
+                final double finalMin = min;
+                final double finalMax = max;
 
-    @SubscribeEvent
-    public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
-        event.add(EntityType.PLAYER, MAX_MANA.get());
-        event.add(EntityType.PLAYER, MANA_REGEN.get());
-        event.add(EntityType.PLAYER, SPELL_POWER.get());
-        event.add(EntityType.PLAYER, COOLDOWN_REDUCTION.get());
-        event.add(EntityType.PLAYER, MAX_STAGGER.get());
+                return ATTRIBUTES.register(name,
+                                () -> new RangedAttribute("attribute." + Projectarcana.MODID + "." + name, finalVal,
+                                                finalMin, finalMax).setSyncable(true));
+        }
 
-        // Elemental
-        event.add(EntityType.PLAYER, ELEMENT_METAL_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_WOOD_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_WATER_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_FIRE_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_LIGHT_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_DARK_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_WIND_DAMAGE.get());
-        event.add(EntityType.PLAYER, ELEMENT_ICE_DAMAGE.get());
+        // Base Attributes
+        public static final RegistryObject<Attribute> MAX_MANA = registerRanged("max_mana", 100.0, 0.0, 1000000.0);
+        public static final RegistryObject<Attribute> MANA_REGEN = registerRanged("mana_regen", 1.0, 0.0, 1024.0);
+        public static final RegistryObject<Attribute> SPELL_POWER = registerRanged("spell_power", 0.0, 0.0, 1000000.0);
+        public static final RegistryObject<Attribute> COOLDOWN_REDUCTION = registerRanged("cooldown_reduction", 0.0,
+                        0.0, 1.0);
+        public static final RegistryObject<Attribute> MAX_STAGGER = registerRanged("max_stagger", 100.0, 0.0, 10000.0);
 
-        // Defense
-        event.add(EntityType.PLAYER, MAGIC_RESILIENCE.get());
-        event.add(EntityType.PLAYER, MAGIC_RESISTANCE.get());
-    }
+        // Elemental Damage Attributes
+        public static final RegistryObject<Attribute> ELEMENT_METAL_DAMAGE = registerRanged("element_metal_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_WOOD_DAMAGE = registerRanged("element_wood_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_WATER_DAMAGE = registerRanged("element_water_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_FIRE_DAMAGE = registerRanged("element_fire_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_LIGHT_DAMAGE = registerRanged("element_light_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_DARK_DAMAGE = registerRanged("element_dark_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_WIND_DAMAGE = registerRanged("element_wind_damage", 0.0,
+                        0.0, 1000000.0);
+        public static final RegistryObject<Attribute> ELEMENT_ICE_DAMAGE = registerRanged("element_ice_damage", 0.0,
+                        0.0, 1000000.0);
+
+        // Defense Attributes
+        public static final RegistryObject<Attribute> MAGIC_RESILIENCE = registerRanged("magic_resilience", 0.0, 0.0,
+                        1000000.0);
+        public static final RegistryObject<Attribute> MAGIC_RESISTANCE = registerRanged("magic_resistance", 0.0, 0.0,
+                        1000000.0);
+
+        @SubscribeEvent
+        public static void modifyEntityAttributes(EntityAttributeModificationEvent event) {
+                event.add(EntityType.PLAYER, MAX_MANA.get());
+                event.add(EntityType.PLAYER, MANA_REGEN.get());
+                event.add(EntityType.PLAYER, SPELL_POWER.get());
+                event.add(EntityType.PLAYER, COOLDOWN_REDUCTION.get());
+                event.add(EntityType.PLAYER, MAX_STAGGER.get());
+
+                // Elemental
+                event.add(EntityType.PLAYER, ELEMENT_METAL_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_WOOD_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_WATER_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_FIRE_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_LIGHT_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_DARK_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_WIND_DAMAGE.get());
+                event.add(EntityType.PLAYER, ELEMENT_ICE_DAMAGE.get());
+
+                // Defense
+                event.add(EntityType.PLAYER, MAGIC_RESILIENCE.get());
+                event.add(EntityType.PLAYER, MAGIC_RESISTANCE.get());
+        }
 }

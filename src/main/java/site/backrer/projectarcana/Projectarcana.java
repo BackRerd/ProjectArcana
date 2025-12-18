@@ -31,6 +31,8 @@ public class Projectarcana {
         // Register the Deferred Register to the mod event bus so attributes get
         // registered
         site.backrer.projectarcana.registry.MagicAttributes.ATTRIBUTES.register(modEventBus);
+        site.backrer.projectarcana.registry.ModItems.ITEMS.register(modEventBus);
+        site.backrer.projectarcana.registry.ModCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);

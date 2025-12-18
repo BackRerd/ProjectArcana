@@ -61,7 +61,7 @@ Project Arcana 使用数据包 (Data Pack) 来管理所有自定义魔法属性�
 
 1.  **对于模组开发者**: 修改 `src/main/resources/.../global_attributes.json`。
 2.  **对于整合包作者**: 创建一个数据包，在 `data/projectarcana/magic_config/global_attributes.json` 路径下放置相同结构的 JSON 文件以覆盖默认值。
-3.  **生效**: 修改数据包后，如果是单人游戏或服务器，通常需要重启游戏（因为属性的 Min/Max 需要在注册阶段或加载早期通过反射注入，热重载可能只更新 Value 而不更新 Min/Max）。
+3.  **生效**: 修改数据包后，运行 `/reload` 指令。由于使用了反射注入技术，属性的默认值、`min` 和 `max` 限制都会立即同步并在当前在线玩家身上生效。
 
 ## 注意事项
 

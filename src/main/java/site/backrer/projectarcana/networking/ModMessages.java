@@ -8,6 +8,7 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import site.backrer.projectarcana.Projectarcana;
 import site.backrer.projectarcana.networking.packet.PacketSyncMagicStats;
+import site.backrer.projectarcana.networking.packet.PacketSpawnMagicEffect;
 
 public class ModMessages {
     private static SimpleChannel INSTANCE;
@@ -31,6 +32,12 @@ public class ModMessages {
                 .decoder(PacketSyncMagicStats::new)
                 .encoder(PacketSyncMagicStats::toBytes)
                 .consumerMainThread(PacketSyncMagicStats::handle)
+                .add();
+
+        net.messageBuilder(PacketSpawnMagicEffect.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(PacketSpawnMagicEffect::new)
+                .encoder(PacketSpawnMagicEffect::toBytes)
+                .consumerMainThread(PacketSpawnMagicEffect::handle)
                 .add();
     }
 
