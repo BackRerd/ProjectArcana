@@ -69,5 +69,10 @@ public class Projectarcana {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
+
+        @SubscribeEvent
+        public static void registerGuiOverlays(net.minecraftforge.client.event.RegisterGuiOverlaysEvent event) {
+            event.registerAboveAll("magic_stats", site.backrer.projectarcana.client.MagicHUD.HUD_OVERLAY);
+        }
     }
 }

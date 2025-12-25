@@ -58,6 +58,20 @@ public class MagicAPI {
     }
 
     /**
+     * 获取当前护盾值 (Get Current Shield)
+     */
+    public static float getCurrentShield(LivingEntity entity) {
+        if (entity.level().isClientSide) {
+            if (entity instanceof Player && entity.getUUID().equals(Minecraft.getInstance().player.getUUID())) {
+                return ClientMagicStatsData.getShield();
+            }
+            return 0;
+        } else {
+            return entity.getCapability(MagicStatsProvider.MAGIC_STATS).map(stats -> stats.getShield()).orElse(0f);
+        }
+    }
+
+    /**
      * 获取魔力恢复速度 (Get Mana Regen)
      */
     public static float getManaRegen(LivingEntity entity) {
@@ -117,5 +131,45 @@ public class MagicAPI {
 
     public static float getMagicResistance(LivingEntity entity) {
         return (float) entity.getAttributeValue(MagicAttributes.MAGIC_RESISTANCE.get());
+    }
+
+    /**
+     * 获取实体的觉醒原型 ID (Get Entity's Awakening Archetype ID)
+     */
+    public static String getCurrentArchetype(LivingEntity entity) {
+        if (entity.level().isClientSide) {
+            Player localPlayer = Minecraft.getInstance().player;
+            if (entity instanceof Player && localPlayer != null && entity.getUUID().equals(localPlayer.getUUID())) {
+                return ClientMagicStatsData.getArchetype();
+            }
+            return "";
+        } else {
+            return entity.getCapability(MagicStatsProvider.MAGIC_STATS).map(stats -> stats.getArchetype()).orElse("");
+        }
+    }
+
+    /**
+     * 获取实体拥有的魔法元素列表 (Get Entity's Assigned Magic Elements)
+     */
+    public static java.util.List<MagicElement> getAssignedElements(LivingEntity entity) {
+        if (entity.level().isClientSide) {
+            Player localPlayer = Minecraft.getInstance().player;
+            if (entity instanceof Player && localPlayer != null && entity.getUUID().equals(localPlayer.getUUID())) {
+                return ClientMagicStatsData.getElements().stream()
+                        .map(name -> {
+                            try {
+                                return MagicElement.valueOf(name);
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        })
+                        .filter(java.util.Objects::nonNull)
+                        .toList();
+            }
+            return java.util.Collections.emptyList();
+        } else {
+            return entity.getCapability(MagicStatsProvider.MAGIC_STATS).map(stats -> stats.getElements())
+                    .orElse(java.util.Collections.emptyList());
+        }
     }
 }

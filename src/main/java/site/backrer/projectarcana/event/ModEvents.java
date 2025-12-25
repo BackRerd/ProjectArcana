@@ -102,11 +102,9 @@ public class ModEvents {
                 }
 
                 // Sync to Client
-                // Only sync if changed? Or periodically? For smoothness, maybe every tick or
-                // every few ticks.
-                // For now, let's sync every tick to be safe and responsive.
                 ModMessages.sendToPlayer(new PacketSyncMagicStats(magicStats.getMana(), magicStats.getStagger(),
-                        magicStats.getArchetype(), magicStats.getElements().stream().map(Enum::name).toList()),
+                        magicStats.getShield(), magicStats.getArchetype(),
+                        magicStats.getElements().stream().map(Enum::name).toList()),
                         (ServerPlayer) event.player);
             });
         }

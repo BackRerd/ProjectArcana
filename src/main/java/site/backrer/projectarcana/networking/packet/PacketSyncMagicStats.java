@@ -11,12 +11,14 @@ import java.util.function.Supplier;
 public class PacketSyncMagicStats {
     private final float mana;
     private final float stagger;
+    private final float shield;
     private final String archetype;
     private final List<String> elements;
 
-    public PacketSyncMagicStats(float mana, float stagger, String archetype, List<String> elements) {
+    public PacketSyncMagicStats(float mana, float stagger, float shield, String archetype, List<String> elements) {
         this.mana = mana;
         this.stagger = stagger;
+        this.shield = shield;
         this.archetype = archetype;
         this.elements = elements;
     }
@@ -24,6 +26,7 @@ public class PacketSyncMagicStats {
     public PacketSyncMagicStats(FriendlyByteBuf buf) {
         this.mana = buf.readFloat();
         this.stagger = buf.readFloat();
+        this.shield = buf.readFloat();
         this.archetype = buf.readUtf();
         int size = buf.readInt();
         this.elements = new ArrayList<>(size);
@@ -35,6 +38,7 @@ public class PacketSyncMagicStats {
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeFloat(mana);
         buf.writeFloat(stagger);
+        buf.writeFloat(shield);
         buf.writeUtf(archetype != null ? archetype : "");
         buf.writeInt(elements.size());
         for (String element : elements) {
@@ -46,7 +50,7 @@ public class PacketSyncMagicStats {
         NetworkEvent.Context context = supplier.get();
         context.enqueueWork(() -> {
             // HERE WE ARE ON THE CLIENT
-            ClientMagicStatsData.set(mana, stagger, archetype, elements);
+            ClientMagicStatsData.set(mana, stagger, shield, archetype, elements);
         });
         return true;
     }
